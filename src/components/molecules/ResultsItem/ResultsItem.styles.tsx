@@ -14,7 +14,7 @@ export const StyledResultsItem = styled.li<{
   border: 0.1rem solid ${(props) => props.theme.color.blackTint};
   height: 11.2rem;
   transition: 0.2s ease all;
-  @media ${respondTo(MediaQuery.Medium)} {
+  @media ${respondTo(MediaQuery.Large)} {
     max-width: calc(50% - 0.8rem);
     height: 12rem;
   }
@@ -27,9 +27,7 @@ export const StyledResultsItem = styled.li<{
   }
 `
 
-export const StyledFavButton = styled.button<{
-  isSaved?: boolean
-}>`
+export const StyledFavButton = styled.button<{ isSaved?: boolean }>`
   min-height: 100%;
   min-width: 5rem;
   display: flex;
@@ -55,7 +53,7 @@ export const StyledFavButton = styled.button<{
     transition: 0.25s ease all;
   }
   
-  @media ${respondTo(MediaQuery.Medium)} {
+  @media ${respondTo(MediaQuery.Large)} {
     &:hover {
       cursor: pointer;
       background: ${(props) => props.theme.color.apoBlueTint};
@@ -93,8 +91,7 @@ export const StyledSecondLineItem = styled.div`
     width: 1rem;
     fill: ${(props) => props.theme.color.apoOrange};
   }
-}
-`
+}`
 
 export const StyledSecondLineText = styled.span`
   height: 0.8rem;
@@ -165,6 +162,6 @@ export const StyledRepositoryDescription = styled.span`
   @media ${respondTo(MediaQuery.Medium)} {
     font-size: 1.1rem;
     margin: 1rem 0 0;
-    line-height: 1;
+    line-height: 1.24;
   }
 `
