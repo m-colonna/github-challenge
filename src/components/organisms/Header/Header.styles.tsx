@@ -30,8 +30,11 @@ export const StyledTopHeader = styled.div`
   z-index: ${zIndex.Navigation};
   @media ${respondTo(MediaQuery.Medium)} {
     width: auto;
-    padding-right: 4rem;
+    padding-right: 2rem;
     box-shadow: none;
+  }
+  @media ${respondTo(MediaQuery.Large)} {
+    padding-right: 4rem;
   }
 `
 
