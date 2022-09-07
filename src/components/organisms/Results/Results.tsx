@@ -92,7 +92,7 @@ export const Results = ({ currentState, currentView }: ResultsProps): ReactEleme
     const updatedSavedRepositories = checkIsSaved(selectedItem.id)
       ? deleteSavedItem(savedRepositories, itemIndex)
       : [selectedItem, ...savedRepositories]
-
+    // TODO: Add aria-live to alert the user about the Saved Repository status
     setSavedRepositories(updatedSavedRepositories)
     updatedSavedRepositories.length > 0 ? setSavedState({ savedState: true }) : setSavedState({ savedState: false })
   }
@@ -147,6 +147,8 @@ export const Results = ({ currentState, currentView }: ResultsProps): ReactEleme
           availableRepositories={availableRepositories}
           currentView={viewState.currentView}
           availableSavedRepositories={availableSavedRepositories}
+          aria-label={`There are ${availableRepositories} available repositories.`}
+          tab-index='3'
         />
         {currentView.currentView === CurrentView.PopularScreen &&
           currentState !== CurrentState.Error &&
@@ -154,17 +156,17 @@ export const Results = ({ currentState, currentView }: ResultsProps): ReactEleme
             <StyledLanguageFilter>
               <StyledLabel>Language</StyledLabel>
               <StyledLanguageDropdown
-                placeholder='Any'
                 isDisabled={fetchState.currentState === CurrentState.Loading}
                 value={language}
                 onChange={(event) => {
                   changeLanguage(event, language)
                 }}
+                aria-label="Select a language to filter the search results."
               >
-                <option value=''>Any</option>
+                <option value='' aria-label="All languages are shown.">Any</option>
                 {uniqueLanguages.map((language) => {
                   return (
-                    <option key={language} value={language}>
+                    <option key={language} value={language} aria-label={`Current language: ${language}.`}>
                       {language}
                     </option>
                   )
