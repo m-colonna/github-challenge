@@ -35,7 +35,8 @@ export const StyledResultsList = styled.ul`
     align-items: flex-start;
     justify-content: flex-start;
     flex-wrap: wrap;
-    max-width: calc(100% - 30rem);
+    margin-left: 22rem;
+    width: calc(100% - 22rem);
   }
 `
 
@@ -55,9 +56,11 @@ export const StyledResultsInterface = styled.div`
     margin: 0;
     padding: 1rem 2rem 2rem 0;
     height: 100%;
-    width: 30rem;
+    width: 20rem;
+    position: fixed;
   }
 `
+
 export const StyledLanguageFilter = styled.div`
   display: flex;
   align-items: center;
@@ -104,17 +107,4 @@ export const StyledLanguageDropdown = styled.select<{ isDisabled: boolean }>`
   @media ${respondTo(MediaQuery.Medium)} {
     width: 100%;
   }
-`
-// TODO: This is part of the map filtering attempt, might re-use later.
-
-export const StyledClearButton = styled.button<{ isDisabled?: boolean }>`
-  position: absolute;
-  z-index: ${zIndex.Content};
-  right: 2.1rem;
-  width: ${(props) => (props.isDisabled ? '0' : '3rem')};
-  overflow: hidden;
-  height: 2.5rem;
-  outline: none;
-  border: 0 none;
-  background: ${(props) => props.theme.color.white};
 `
