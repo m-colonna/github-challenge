@@ -43,6 +43,7 @@ export const Header = ({ currentView, currentSavedStatus }: HeaderProps): ReactE
               onClick={setCurrentView}
               isActive={currentView.currentView === CurrentView.PopularScreen}
               tabIndex={1}
+              aria-label="Tab selector, most popular section"
             >
               Most Popular
             </StyledCategoryName>
@@ -54,6 +55,7 @@ export const Header = ({ currentView, currentSavedStatus }: HeaderProps): ReactE
               isActive={currentView.currentView === CurrentView.SavedScreen}
               disabled={currentSavedStatus.savedState === false}
               tabIndex={2}
+              aria-label="Tab selector, saved section"
             >
               Saved Repositories
             </StyledCategoryName>
