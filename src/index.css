@@ -1,0 +1,21 @@
+html, body {
+  font-size: 10px;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
+}
+
+div, section {
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, span, p, button, a {
+  margin: 0;
+  padding: 0;
+}
+
+::selection {
+  background: #00509111;
+  color: #444;
+}
