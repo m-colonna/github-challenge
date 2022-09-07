@@ -91,6 +91,12 @@ export const StyledSecondLineItem = styled.div`
     width: 1rem;
     fill: ${(props) => props.theme.color.apoOrange};
   }
+
+  @media ${respondTo(MediaQuery.Medium)} {
+   svg {
+     width: 1.2rem;
+    }
+  }
 }`
 
 export const StyledSecondLineText = styled.span`
@@ -102,8 +108,9 @@ export const StyledSecondLineText = styled.span`
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 20ch;
-  @media ${respondTo(MediaQuery.Medium)} {
+  @media ${respondTo(MediaQuery.Large)} {
     font-size: 1rem;
+    height: 1rem;
   }
 `
 
@@ -124,6 +131,13 @@ export const StyledLanguageItem = styled.p`
     height: 0.6rem;
     background: ${(props) => props.theme.color.apoRed};
     border-radius: 50%;
+  }
+
+  @media ${respondTo(MediaQuery.Medium)} {
+    &::before {
+      width: 0.8rem;
+      height: 0.8rem;
+    }
   }
 `
 
