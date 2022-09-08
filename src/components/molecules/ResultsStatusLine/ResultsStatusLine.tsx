@@ -20,11 +20,11 @@ export const ResultsStatusLine = ({
       <StyledHeading>
         {currentState === CurrentState.Loading ? (
           'Loading...'
-        ) : currentView === CurrentView.PopularScreen ? (
+        ) : currentView === CurrentView.TrendingView ? (
           availableRepositories && availableRepositories !== 0 ? (
             <>
               {/* TODO: Change repositories/repository when available repositories is 1 */}
-              <b>{availableRepositories}</b> available repositories
+              <strong>{availableRepositories}</strong> available repositories
             </>
           ) : (
             'No repositories found.'
@@ -32,7 +32,7 @@ export const ResultsStatusLine = ({
         ) : availableSavedRepositories && availableSavedRepositories !== 0 ? (
           <>
             {/* TODO: Change repositories/repository when available repositories is 1 */}
-            <b>{availableSavedRepositories}</b> saved repositories
+            <strong>{availableSavedRepositories}</strong> saved repositories
           </>
         ) : (
           'No repositories saved yet.'

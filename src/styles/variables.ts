@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-export const PAGE_MAX_WIDTH = '1024px' // TODO: Update to tablet resolution if possible
-
 // eslint-disable-next-line no-shadow
 export enum FontWeight {
   Normal = 400,
@@ -15,14 +13,13 @@ export enum FontFamily {
 
 // eslint-disable-next-line no-shadow
 export enum zIndex {
-  Content,
-  Navigation,
+  Navigation = 1,
 }
 
 // eslint-disable-next-line no-shadow
 export enum CurrentView {
-  PopularScreen = 'Popular',
-  SavedScreen = 'Saved',
+  TrendingView = 'Trending',
+  SavedView = 'Saved',
 }
 
 // eslint-disable-next-line no-shadow

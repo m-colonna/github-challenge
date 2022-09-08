@@ -21,7 +21,7 @@ interface ResultsItemProps {
 }
 
 export const ResultsItem = ({ repository, saved, onToggleSave }: ResultsItemProps): ReactElement => {
-
+  // Set ARIA labels for interactive elements audio support
   const SavedCounterAriaLabel = `This repository was saved ${repository.stargazers_count} times.`
   const LanguageAriaLabel = `This repository uses ${repository.language} language.`
   const RepositoryNameAriaLabel = `Repository name: ${repository.name}.`
@@ -31,15 +31,19 @@ export const ResultsItem = ({ repository, saved, onToggleSave }: ResultsItemProp
   const LicenceAriaLabel = `This repository uses ${repository.license?.name}.`
 
   return (
-    <StyledResultsItem aria-label="Repository item" isSaved={saved}>
+    <StyledResultsItem aria-label='Repository item' isSaved={saved}>
       <StyledResultsInfo href={repository.html_url} target='_blank'>
         <StyledRepositoryName aria-label={RepositoryNameAriaLabel}>{repository.name}</StyledRepositoryName>
-        <StyledRepositoryLink aria-hidden="true">{repository.html_url}</StyledRepositoryLink>
-        <StyledRepositoryDescription aria-label={RepositoryDescriptionAriaLabel}>{repository.description}</StyledRepositoryDescription>
+        <StyledRepositoryLink aria-hidden='true'>{repository.html_url}</StyledRepositoryLink>
+        <StyledRepositoryDescription aria-label={RepositoryDescriptionAriaLabel}>
+          {repository.description}
+        </StyledRepositoryDescription>
         <StyledResultsInfoSecondLine>
           <StyledSecondLineItem>
             <Icon.Star />
-            <StyledSecondLineText aria-label={SavedCounterAriaLabel}>{repository.stargazers_count}</StyledSecondLineText>
+            <StyledSecondLineText aria-label={SavedCounterAriaLabel}>
+              {repository.stargazers_count}
+            </StyledSecondLineText>
           </StyledSecondLineItem>
           {repository.language && (
             <StyledSecondLineItem aria-label={LanguageAriaLabel}>
@@ -55,7 +59,11 @@ export const ResultsItem = ({ repository, saved, onToggleSave }: ResultsItemProp
           )}
         </StyledResultsInfoSecondLine>
       </StyledResultsInfo>
-      <StyledFavButton aria-label={saved ? DeleteButtonAriaLabel : SaveButtonAriaLabel} isSaved={saved} onClick={onToggleSave}>
+      <StyledFavButton
+        aria-label={saved ? DeleteButtonAriaLabel : SaveButtonAriaLabel}
+        isSaved={saved}
+        onClick={onToggleSave}
+      >
         <Icon.Star />
       </StyledFavButton>
     </StyledResultsItem>

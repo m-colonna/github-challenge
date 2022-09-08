@@ -1,24 +1,25 @@
 import React from 'react'
 import { ThemeProvider } from 'styled-components'
 import { Home } from './components/pages/Home'
-import { CurrentSavedRepositoriesProvider } from './currentSavedRepositoriesContext'
-import { CurrentStatusProvider } from './currentStateContext'
-import { CurrentViewInterface, CurrentViewProvider } from './currentViewContext'
+import { CurrentFetchStateProvider } from './currentFetchContext'
+import { CurrentSavedStateProvider } from './currentSavedStateContext'
+import { CurrentViewState, CurrentViewStateProvider } from './currentViewContext'
 import { theme } from './styles/theme/default'
 import { CurrentView } from './styles/variables'
 
 function App() {
-  const currentViewInterface: CurrentViewInterface = { currentView: CurrentView.PopularScreen }
+  const currentViewInterface: CurrentViewState = { currentView: CurrentView.TrendingView }
   return (
-    <CurrentStatusProvider>
-      <CurrentSavedRepositoriesProvider>
-        <CurrentViewProvider value={currentViewInterface}>
+    // Current fetch/saved/view providers for global state management - Theme provider for theme usage through the styling
+    <CurrentFetchStateProvider>
+      <CurrentSavedStateProvider>
+        <CurrentViewStateProvider value={currentViewInterface}>
           <ThemeProvider theme={theme}>
             <Home />
           </ThemeProvider>
-        </CurrentViewProvider>
-      </CurrentSavedRepositoriesProvider>
-    </CurrentStatusProvider>
+        </CurrentViewStateProvider>
+      </CurrentSavedStateProvider>
+    </CurrentFetchStateProvider>
   )
 }
 
