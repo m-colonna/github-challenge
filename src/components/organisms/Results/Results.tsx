@@ -1,8 +1,8 @@
 import { ChangeEvent, ReactElement, useEffect, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
-import { useCurrentSavedRepositoriesStatus } from '../../../currentSavedRepositoriesContext'
-import { CurrentStatusInterface, useCurrentStatus } from '../../../currentStateContext'
-import { CurrentViewInterface, useCurrentView } from '../../../currentViewContext'
+import { CurrentFetchState, useCurrentFetchState } from '../../../currentFetchContext'
+import { useCurrentSavedState } from '../../../currentSavedStateContext'
+import { CurrentViewState, useCurrentViewState } from '../../../currentViewContext'
 import { useRepositoriesData } from '../../../hooks/useRepositoriesData'
 import { CurrentState, CurrentView } from '../../../styles/variables'
 import { RepositoryType } from '../../../utils/repositories.types'
@@ -17,19 +17,21 @@ import {
   StyledResultsList,
 } from './Results.styles'
 
-interface ResultsProps {
-  currentState: CurrentStatusInterface
-  currentView: CurrentViewInterface
+interface StateProps {
+  currentState: CurrentFetchState
+  currentView: CurrentViewState
 }
 
-export const Results = ({ currentState, currentView }: ResultsProps): ReactElement => {
-  // View and fetch states
-  const { fetchState } = useCurrentStatus()
-  const { viewState } = useCurrentView()
-  const { setSavedState } = useCurrentSavedRepositoriesStatus()
+export const Results = ({ currentState, currentView }: StateProps): ReactElement => {
+  // View and fetch global states
+  const { fetchState } = useCurrentFetchState()
+  const { viewState } = useCurrentViewState()
+  const { setSavedState } = useCurrentSavedState()
 
-  // Language and repositories init
+  // Init local language state
   const [language, setLanguage] = useState('')
+
+  // Init repositories
   const { repositories, getRepositories } = useRepositoriesData()
   // TODO: Using an useEffect to just call it once, there's surely a better way to solve this.
   const useRepositories = () => {
@@ -37,6 +39,10 @@ export const Results = ({ currentState, currentView }: ResultsProps): ReactEleme
       getRepositories(language)
     }, []) // eslint-disable-line
   }
+  const trendingRepositories = repositories?.items || []
+
+  // Init saved repositories
+  const [savedRepositories, setSavedRepositories] = useLocalStorage<Array<RepositoryType>>('savedRepositories', [])
 
   // Handle language change in the dropdown
   const changeLanguage = (event: ChangeEvent<HTMLSelectElement>, language: string) => {
@@ -44,18 +50,15 @@ export const Results = ({ currentState, currentView }: ResultsProps): ReactEleme
     RepositoriesResults(language)
   }
 
-  // Init repositories
-  const entries = repositories?.items || []
-
-  // Get unique language list from Available Repositories
+  // Get unique language list from the available trending repositories
   const uniqueLanguages: string[] = []
-  // TODO: Using a filter here, but I might be able to solve it more gracefully.
+  // TODO: Using a filter here, but I might be able to solve it more gracefully (without disabling eslint at least).
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getUniqueLanguages = entries.filter((entry) => {
-    const isDuplicate = entry.language && uniqueLanguages.includes(entry.language)
+  const getUniqueLanguages = trendingRepositories.filter((repository) => {
+    const isDuplicate = repository.language && uniqueLanguages.includes(repository.language)
 
-    if (!isDuplicate && entry.language !== null) {
-      uniqueLanguages.push(entry.language)
+    if (!isDuplicate && repository.language !== null) {
+      uniqueLanguages.push(repository.language)
 
       return true
     }
@@ -63,94 +66,101 @@ export const Results = ({ currentState, currentView }: ResultsProps): ReactEleme
     return false
   })
 
-  // Get available repositories length
-  const availableRepositories = entries.filter((entry) => entry.language && entry.language.includes(language)).length
+  // Get available trending repositories length
+  const availableRepositoriesCount = trendingRepositories.filter(
+    (repository) => repository.language && repository.language.includes(language)
+  ).length
 
-  // Get saved repositories
-  const [savedRepositories, setSavedRepositories] = useLocalStorage<Array<RepositoryType>>('savedRepositories', [])
-
-  // Check if current item is seleted
-  const checkIsSaved = (entryId: number) => {
-    const checkSavedRepositories = savedRepositories.filter((entry) => entry.id === entryId)
+  // Check if current repository is saved
+  const checkIsSaved = (repositoryId: number) => {
+    const checkSavedRepositories = savedRepositories.filter((repository) => repository.id === repositoryId)
     return checkSavedRepositories.length > 0
   }
 
-  // Remove saved item from saved items array
-  const deleteSavedItem = (selectedItem: RepositoryType[], itemIndex: number) => {
-    if (itemIndex > -1) {
-      const updatedSavedRepositories = [...selectedItem]
-      updatedSavedRepositories.splice(itemIndex, 1)
+  // Remove saved repository from saved repository array
+  const deleteSavedItem = (selectedRepository: RepositoryType[], repositoryIndex: number) => {
+    if (repositoryIndex > -1) {
+      const updatedSavedRepositories = [...selectedRepository]
+      updatedSavedRepositories.splice(repositoryIndex, 1)
       return updatedSavedRepositories
     }
-    return selectedItem
+    return selectedRepository
   }
 
-  // Toggle save status on item and update save array status
-  const toggleSave = (selectedItem: RepositoryType) => {
-    const itemIndex = savedRepositories.findIndex((itemData) => itemData.id === selectedItem.id)
+  // Toggle save repository on item and update save array repository
+  const toggleSave = (selectedRepository: RepositoryType) => {
+    const repositoryIndex = savedRepositories.findIndex((repository) => repository.id === selectedRepository.id)
 
-    const updatedSavedRepositories = checkIsSaved(selectedItem.id)
-      ? deleteSavedItem(savedRepositories, itemIndex)
-      : [selectedItem, ...savedRepositories]
-    // TODO: Add aria-live to alert the user about the Saved Repository status
+    const updatedSavedRepositories = checkIsSaved(selectedRepository.id)
+      ? deleteSavedItem(savedRepositories, repositoryIndex)
+      : [selectedRepository, ...savedRepositories]
+
+    // TODO: Add aria-live to alert the user about the Saved Repository repository
+
     setSavedRepositories(updatedSavedRepositories)
     updatedSavedRepositories.length > 0 ? setSavedState({ savedState: true }) : setSavedState({ savedState: false })
   }
 
   // Get saved repositories length
   const availableSavedRepositories = savedRepositories.length
-  const useSavedRepositoriesStatus = () => {
+  const useSavedState = () => {
     useEffect(() => {
       availableSavedRepositories > 0 ? setSavedState({ savedState: true }) : setSavedState({ savedState: false })
     }, [])
   }
 
-  // Get repositories result items
+  // Show trending repositories items
   const RepositoriesResults = (language: string) => {
-    return entries
-      .filter((entry) => entry.language && entry.language.includes(language))
-      .map((entry) => {
+    return trendingRepositories
+      .filter((repository) => repository.language && repository.language.includes(language))
+      .map((repository) => {
         return (
           <ResultsItem
-            key={entry.id}
-            repository={entry}
-            onToggleSave={() => toggleSave(entry)}
-            saved={checkIsSaved(entry.id)}
+            key={repository.id}
+            repository={repository}
+            onToggleSave={() => toggleSave(repository)}
+            saved={checkIsSaved(repository.id)}
           />
         )
       })
   }
 
-  // Get repositories saved results
+  // Show saved repositories results
   const SavedResults = () => {
-    return savedRepositories.map((savedRepositoryEntry) => {
+    return savedRepositories.map((savedRepository) => {
       return (
         <ResultsItem
-          key={savedRepositoryEntry.id}
-          repository={savedRepositoryEntry}
-          onToggleSave={() => toggleSave(savedRepositoryEntry)}
-          saved={checkIsSaved(savedRepositoryEntry.id)}
+          key={savedRepository.id}
+          repository={savedRepository}
+          onToggleSave={() => toggleSave(savedRepository)}
+          saved={checkIsSaved(savedRepository.id)}
         />
       )
     })
   }
 
-  // Fetch repositories and set initial saved repositories status
+  // Set ARIA labels for interactive elements audio support
+  const ResultsStatusLineLabel = `There are ${availableRepositoriesCount} available repositories.`
+  const LanguageDropdownLabel = 'Select a language to filter the search results.'
+  const LanguageOptionLabel = `Current language: ${language}.`
+  const AnyLanguageLabel = 'All languages are shown.'
+
+  // Fetch repositories and set initial saved repositories repository
   useRepositories()
-  useSavedRepositoriesStatus()
+  useSavedState()
 
   return (
     <StyledResults>
       <StyledResultsInterface>
         <ResultsStatusLine
           currentState={fetchState.currentState}
-          availableRepositories={availableRepositories}
+          availableRepositories={availableRepositoriesCount}
           currentView={viewState.currentView}
           availableSavedRepositories={availableSavedRepositories}
-          aria-label={`There are ${availableRepositories} available repositories.`}
+          aria-label={ResultsStatusLineLabel}
           tab-index='3'
         />
-        {currentView.currentView === CurrentView.PopularScreen &&
+        {currentView.currentView === CurrentView.TrendingView &&
           currentState !== CurrentState.Error &&
           uniqueLanguages.length > 0 && (
             <StyledLanguageFilter>
@@ -161,12 +171,14 @@ export const Results = ({ currentState, currentView }: ResultsProps): ReactEleme
                 onChange={(event) => {
                   changeLanguage(event, language)
                 }}
-                aria-label="Select a language to filter the search results."
+                aria-label={LanguageDropdownLabel}
               >
-                <option value='' aria-label="All languages are shown.">Any</option>
+                <option value='' aria-label={AnyLanguageLabel}>
+                  Any
+                </option>
                 {uniqueLanguages.map((language) => {
                   return (
-                    <option key={language} value={language} aria-label={`Current language: ${language}.`}>
+                    <option key={language} value={language} aria-label={LanguageOptionLabel}>
                       {language}
                     </option>
                   )
@@ -176,7 +188,7 @@ export const Results = ({ currentState, currentView }: ResultsProps): ReactEleme
           )}
       </StyledResultsInterface>
       <StyledResultsList>
-        {currentView.currentView === CurrentView.PopularScreen ? RepositoriesResults(language) : SavedResults()}
+        {currentView.currentView === CurrentView.TrendingView ? RepositoriesResults(language) : SavedResults()}
       </StyledResultsList>
     </StyledResults>
   )

@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
-import { CurrentSavedRepositoriesInterface } from '../../../currentSavedRepositoriesContext'
-import { CurrentViewInterface, useCurrentView } from '../../../currentViewContext'
+import { CurrentSavedState } from '../../../currentSavedStateContext'
+import { CurrentViewState, useCurrentViewState } from '../../../currentViewContext'
 import { CurrentView } from '../../../styles/variables'
 import { Icon } from '../../atoms/Icon/Icon'
 import {
@@ -9,53 +9,60 @@ import {
   StyledCategoryName,
   StyledHeader,
   StyledSubHeader,
-  StyledTopButton,
   StyledTopHeader,
+  StyledTopLogo,
 } from './Header.styles'
 
 interface HeaderProps {
-  currentView: CurrentViewInterface
-  currentSavedStatus: CurrentSavedRepositoriesInterface
+  currentView: CurrentViewState
+  currentSavedrepository: CurrentSavedState
 }
 
-export const Header = ({ currentView, currentSavedStatus }: HeaderProps): ReactElement => {
-  const { setViewState } = useCurrentView()
+export const Header = ({ currentView, currentSavedrepository }: HeaderProps): ReactElement => {
+  // Init current view state
+  const { setViewState } = useCurrentViewState()
+
+  // Set current view on button interaction
   const setCurrentView = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     const targetButton: HTMLButtonElement = event.currentTarget
     setViewState({ currentView: targetButton.value })
   }
 
+  // Set ARIA labels for interactive elements audio support
+  const PopularViewTabLabel = 'Tab selector, most popular section'
+  const SavedViewTabLabel = 'Tab selector, saved section'
+
   return (
     <StyledHeader>
       <StyledTopHeader>
         {/* TODO: Integrate scrollTop */}
-        <StyledTopButton onClick={() => {}}>
+        <StyledTopLogo>
           <Icon.GithubLogo />
-        </StyledTopButton>
+        </StyledTopLogo>
       </StyledTopHeader>
 
       <StyledSubHeader>
         <StyledCategoriesList>
           <StyledCategoryItem>
             <StyledCategoryName
-              value={CurrentView.PopularScreen}
+              value={CurrentView.TrendingView}
               onClick={setCurrentView}
-              isActive={currentView.currentView === CurrentView.PopularScreen}
+              isActive={currentView.currentView === CurrentView.TrendingView}
               tabIndex={1}
-              aria-label="Tab selector, most popular section"
+              aria-label={PopularViewTabLabel}
             >
               Most Popular
             </StyledCategoryName>
           </StyledCategoryItem>
           <StyledCategoryItem>
             <StyledCategoryName
-              value={CurrentView.SavedScreen}
+              value={CurrentView.SavedView}
               onClick={setCurrentView}
-              isActive={currentView.currentView === CurrentView.SavedScreen}
-              disabled={currentSavedStatus.savedState === false}
+              isActive={currentView.currentView === CurrentView.SavedView}
+              disabled={currentSavedrepository.savedState === false}
               tabIndex={2}
-              aria-label="Tab selector, saved section"
+              aria-label={SavedViewTabLabel}
             >
               Saved Repositories
             </StyledCategoryName>

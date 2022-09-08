@@ -38,7 +38,7 @@ export const StyledTopHeader = styled.div`
   }
 `
 
-export const StyledTopButton = styled.a`
+export const StyledTopLogo = styled.div`
   svg {
     height: 3rem;
   }
