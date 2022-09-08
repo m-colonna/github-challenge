@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import DropdownArrow from '../../../assets/svg/dropdown-arrow.svg'
 import { respondTo } from '../../../styles/helpers/respondTo'
 import { MediaQuery } from '../../../styles/mediaQuery'
-import { FontWeight, zIndex } from '../../../styles/variables'
+import { FontWeight } from '../../../styles/variables'
 
 export const StyledResults = styled.div`
   flex-grow: 1;
